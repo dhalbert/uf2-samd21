@@ -620,9 +620,9 @@ static void udi_msc_spc_mode_sense(bool b_sense10) {
     };
 
     uint8_t data_sense_lgt;
-    uint8_t mode;
-    uint8_t request_lgt;
-    struct spc_control_page_info_execpt *ptr_mode;
+    // uint8_t mode;
+    // uint8_t request_lgt;
+    // struct spc_control_page_info_execpt *ptr_mode;
     __attribute__((__aligned__(4))) static union sense_6_10 sense;
 
     // Clear all fields
@@ -630,31 +630,31 @@ static void udi_msc_spc_mode_sense(bool b_sense10) {
 
     // Initialize process
     if (b_sense10) {
-        request_lgt = udi_msc_cbw.CDB[8];
-        ptr_mode = &sense.s10.sense_data;
+        // request_lgt = udi_msc_cbw.CDB[8];
+        // ptr_mode = &sense.s10.sense_data;
         data_sense_lgt = sizeof(struct scsi_mode_param_header10);
     } else {
-        request_lgt = udi_msc_cbw.CDB[4];
-        ptr_mode = &sense.s6.sense_data;
+        // request_lgt = udi_msc_cbw.CDB[4];
+        // ptr_mode = &sense.s6.sense_data;
         data_sense_lgt = sizeof(struct scsi_mode_param_header6);
     }
 
     // No Block descriptor
 
     // Fill page(s)
-    mode = udi_msc_cbw.CDB[2] & SCSI_MS_MODE_ALL;
-    if ((SCSI_MS_MODE_INFEXP == mode) || (SCSI_MS_MODE_ALL == mode)) {
-        // Informational exceptions control page (from SPC)
-        ptr_mode->page_code = SCSI_MS_MODE_INFEXP;
-        ptr_mode->page_length = SPC_MP_INFEXP_PAGE_LENGTH;
-        ptr_mode->mrie = SPC_MP_INFEXP_MRIE_NO_SENSE;
-        data_sense_lgt += sizeof(struct spc_control_page_info_execpt);
-    }
+    // mode = udi_msc_cbw.CDB[2] & SCSI_MS_MODE_ALL;
+    // if ((SCSI_MS_MODE_INFEXP == mode) || (SCSI_MS_MODE_ALL == mode)) {
+    //     // Informational exceptions control page (from SPC)
+    //     ptr_mode->page_code = SCSI_MS_MODE_INFEXP;
+    //     ptr_mode->page_length = SPC_MP_INFEXP_PAGE_LENGTH;
+    //     ptr_mode->mrie = SPC_MP_INFEXP_MRIE_NO_SENSE;
+    //     data_sense_lgt += sizeof(struct spc_control_page_info_execpt);
+    // }
     // Can't send more than mode sense data length
-    if (request_lgt > data_sense_lgt)
-        request_lgt = data_sense_lgt;
-    if (!udi_msc_cbw_validate(request_lgt, USB_CBW_DIRECTION_IN))
-        return;
+    // if (request_lgt > data_sense_lgt)
+    //     request_lgt = data_sense_lgt;
+    // if (!udi_msc_cbw_validate(request_lgt, USB_CBW_DIRECTION_IN))
+    //     return;
 
     // Fill mode parameter header length
 
@@ -665,7 +665,7 @@ static void udi_msc_spc_mode_sense(bool b_sense10) {
     }
 
     // Send mode sense data
-    udi_msc_data_send((uint8_t *)&sense, request_lgt);
+    udi_msc_data_send((uint8_t *)&sense, data_sense_lgt);
 }
 
 static void udi_msc_spc_prevent_allow_medium_removal(void) {
